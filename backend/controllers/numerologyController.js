@@ -4,7 +4,9 @@ exports.calculateLuckyNumber = async (req, res) => {
   const { name, dateOfBirth } = req.body;
 
   if (!name || !dateOfBirth) {
-    return res.status(400).json({ error: "Name and Date of Birth are required" });
+    return res
+      .status(400)
+      .json({ error: "Name and Date of Birth are required" });
   }
 
   const parsedDate = new Date(dateOfBirth);
@@ -30,7 +32,7 @@ exports.calculateLuckyNumber = async (req, res) => {
 
     if (user) {
       user.luckyNumber = sum;
-      user.name = name; // Update name if provided
+      user.name = name;
       await user.save();
     } else {
       user = new User({ name, dateOfBirth: parsedDate, luckyNumber: sum });
@@ -40,6 +42,8 @@ exports.calculateLuckyNumber = async (req, res) => {
     res.json({ luckyNumber: user.luckyNumber });
   } catch (error) {
     console.error("Error saving lucky number:", error);
-    res.status(500).json({ message: "Error calculating and saving lucky number" });
+    res
+      .status(500)
+      .json({ message: "Error calculating and saving lucky number" });
   }
 };

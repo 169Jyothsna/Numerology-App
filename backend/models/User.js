@@ -13,8 +13,11 @@ const userSchema = new mongoose.Schema({
   luckyNumber: {
     type: Number,
     required: true,
-  }
+  },
 });
+
+// Create a unique composite index on name and dateOfBirth
+userSchema.index({ name: 1, dateOfBirth: 1 }, { unique: true });
 
 const User = mongoose.model('User', userSchema);
 

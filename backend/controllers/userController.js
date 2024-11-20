@@ -6,16 +6,19 @@ exports.createUser = async (req, res) => {
     const { name, dateOfBirth } = req.body;
 
     if (!name || !dateOfBirth) {
-      return res
-        .status(400)
-        .json({ message: "Name and Date of Birth are required" });
+      return res.status(400).json({ message: "Name and Date of Birth are required" });
     }
 
     const newUser = new User({ name, dateOfBirth, luckyNumber: null }); // Lucky number to be calculated separately
     await newUser.save();
     res.status(201).json(newUser);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    // Check for unique constraint error
+    if (error.code === 11000) {
+      return res.status(400).json({ message: "A user with the same name and date of birth already exists" });
+    }
+    // Handle other errors
+    res.status(500).json({ message: error.message });
   }
 };
 

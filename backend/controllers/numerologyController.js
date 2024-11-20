@@ -1,21 +1,24 @@
+const moment = require("moment");
 const User = require("../models/User");
 
 exports.calculateLuckyNumber = async (req, res) => {
   const { name, dateOfBirth } = req.body;
 
   if (!name || !dateOfBirth) {
-    return res
-      .status(400)
-      .json({ error: "Name and Date of Birth are required" });
+    return res.status(400).json({ error: "Name and Date of Birth are required" });
   }
 
-  const parsedDate = new Date(dateOfBirth);
+  // Parse the date in both formats
+  const parsedDate =
+    moment(dateOfBirth, "YYYY-MM-DD", true).isValid()
+      ? moment(dateOfBirth, "YYYY-MM-DD").toDate()
+      : moment(dateOfBirth, "DD-MM-YYYY").toDate();
+
   if (isNaN(parsedDate)) {
-    return res
-      .status(400)
-      .json({ error: "Invalid date format. Please use YYYY-MM-DD format." });
+    return res.status(400).json({ error: "Invalid date format. Use DD-MM-YYYY or YYYY-MM-DD." });
   }
 
+  // Calculate lucky number
   let sum = dateOfBirth
     .replace(/-/g, "")
     .split("")
@@ -28,22 +31,46 @@ exports.calculateLuckyNumber = async (req, res) => {
   }
 
   try {
-    let user = await User.findOne({ dateOfBirth: parsedDate });
+    // Check for existing user with the same name and dateOfBirth
+    let existingUser = await User.findOne({ name, dateOfBirth: parsedDate });
 
-    if (user) {
-      user.luckyNumber = sum;
-      user.name = name;
-      await user.save();
-    } else {
-      user = new User({ name, dateOfBirth: parsedDate, luckyNumber: sum });
-      await user.save();
+    if (existingUser) {
+      // If both name and dateOfBirth match, update the lucky number
+      existingUser.luckyNumber = sum;
+      await existingUser.save();
+      return res.status(200).json({
+        luckyNumber: existingUser.luckyNumber,
+        message: "Lucky number updated for the existing user.",
+      });
     }
 
-    res.json({ luckyNumber: user.luckyNumber });
+    // Check for users with the same dateOfBirth but different names
+    let sameDobUser = await User.findOne({ dateOfBirth: parsedDate });
+
+    if (sameDobUser) {
+      // Inform the user that the name-dob combination is unique
+      return res.status(400).json({
+        error: "A user with the same date of birth but a different name exists.",
+      });
+    }
+
+    // Create a new user if no matches found
+    const newUser = new User({
+      name,
+      dateOfBirth: parsedDate,
+      luckyNumber: sum,
+    });
+    await newUser.save();
+
+    res.status(201).json({
+      luckyNumber: newUser.luckyNumber,
+      message: "New user created successfully.",
+    });
   } catch (error) {
     console.error("Error saving lucky number:", error);
-    res
-      .status(500)
-      .json({ message: "Error calculating and saving lucky number" });
+    res.status(500).json({
+      message: "Error calculating and saving lucky number",
+      error: error.message,
+    });
   }
 };

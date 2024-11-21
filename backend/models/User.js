@@ -16,8 +16,6 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-// Removed any unique index constraints
-
 const User = mongoose.model("User", userSchema);
 
 module.exports = User;

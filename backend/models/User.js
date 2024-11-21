@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -16,9 +16,8 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-// Create a unique composite index on name and dateOfBirth
-userSchema.index({ name: 1, dateOfBirth: 1 }, { unique: true });
+// Removed any unique index constraints
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model("User", userSchema);
 
 module.exports = User;

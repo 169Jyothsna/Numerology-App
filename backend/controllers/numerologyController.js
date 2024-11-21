@@ -8,12 +8,8 @@ exports.calculateLuckyNumber = async (req, res) => {
     return res.status(400).json({ error: "Name and Date of Birth are required" });
   }
 
-  // Parse the date in both formats
-  const parsedDate =
-    moment(dateOfBirth, "YYYY-MM-DD", true).isValid()
-      ? moment(dateOfBirth, "YYYY-MM-DD").toDate()
-      : moment(dateOfBirth, "DD-MM-YYYY").toDate();
-
+  // Parse and validate date
+  const parsedDate = moment(dateOfBirth, ["YYYY-MM-DD", "DD-MM-YYYY"], true).toDate();
   if (isNaN(parsedDate)) {
     return res.status(400).json({ error: "Invalid date format. Use DD-MM-YYYY or YYYY-MM-DD." });
   }
@@ -31,30 +27,7 @@ exports.calculateLuckyNumber = async (req, res) => {
   }
 
   try {
-    // Check for existing user with the same name and dateOfBirth
-    let existingUser = await User.findOne({ name, dateOfBirth: parsedDate });
-
-    if (existingUser) {
-      // If both name and dateOfBirth match, update the lucky number
-      existingUser.luckyNumber = sum;
-      await existingUser.save();
-      return res.status(200).json({
-        luckyNumber: existingUser.luckyNumber,
-        message: "Lucky number updated for the existing user.",
-      });
-    }
-
-    // Check for users with the same dateOfBirth but different names
-    let sameDobUser = await User.findOne({ dateOfBirth: parsedDate });
-
-    if (sameDobUser) {
-      // Inform the user that the name-dob combination is unique
-      return res.status(400).json({
-        error: "A user with the same date of birth but a different name exists.",
-      });
-    }
-
-    // Create a new user if no matches found
+    // Always create a new user
     const newUser = new User({
       name,
       dateOfBirth: parsedDate,

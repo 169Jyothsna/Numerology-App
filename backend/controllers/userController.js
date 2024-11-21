@@ -9,15 +9,12 @@ exports.createUser = async (req, res) => {
       return res.status(400).json({ message: "Name and Date of Birth are required" });
     }
 
-    const newUser = new User({ name, dateOfBirth, luckyNumber: null }); // Lucky number to be calculated separately
+    // Always create a new user
+    const newUser = new User({ name, dateOfBirth, luckyNumber: null });
     await newUser.save();
+
     res.status(201).json(newUser);
   } catch (error) {
-    // Check for unique constraint error
-    if (error.code === 11000) {
-      return res.status(400).json({ message: "A user with the same name and date of birth already exists" });
-    }
-    // Handle other errors
     res.status(500).json({ message: error.message });
   }
 };
@@ -30,5 +27,15 @@ exports.getUserById = async (req, res) => {
     res.status(200).json(user);
   } catch (error) {
     res.status(400).json({ message: error.message });
+  }
+};
+
+// Controller to get all users
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find();
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };

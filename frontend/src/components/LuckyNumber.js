@@ -25,7 +25,7 @@ const LuckyNumber = () => {
     try {
       setError("");
       const response = await axios.post(
-        "https://my-backend-o9ay.onrender.com",
+        "https://my-backend-o9ay.onrender.com/calculate", // Correct endpoint
         {
           dob: dateOfBirth,
           name: name,
@@ -36,7 +36,10 @@ const LuckyNumber = () => {
       setShowImage(true);
     } catch (error) {
       setError("Error calculating lucky number. Please try again.");
-      console.error(error);
+      console.error("API error:", error);
+      if (error.response) {
+        console.error("Response error data:", error.response.data);
+      }
     }
   };
 

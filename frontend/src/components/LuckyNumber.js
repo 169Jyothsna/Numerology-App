@@ -25,7 +25,7 @@ const LuckyNumber = () => {
     try {
       setError("");
       const response = await axios.post(
-        "http://localhost:8000/api/luckyNumber",
+        "https://my-backend-o9ay.onrender.com",
         {
           dob: dateOfBirth,
           name: name,

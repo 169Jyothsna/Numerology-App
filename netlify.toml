@@ -2,7 +2,7 @@
 base = "frontend"
 command = "npm run build"
 publish = "frontend/build"
-functions = "frontend/backend/netlify/functions"
+functions = "backend/netlify/functions"
 
 [[plugins]]
 package = "@netlify/plugin-functions-install-core"

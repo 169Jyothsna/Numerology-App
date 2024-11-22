@@ -25,7 +25,7 @@ const LuckyNumber = () => {
     try {
       setError("");
       const response = await axios.post(
-        "https://my-backend-o9ay.onrender.com/api/luckyNumber",
+        "https://mern-numerology-app.netlify.app/.netlify/functions/luckyNumber",
         {
           dob: dateOfBirth,
           name: name,

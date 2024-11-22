@@ -1,0 +1,7 @@
+[build]
+  base = "frontend"
+  publish = "frontend/build"
+  functions = "backend/netlify/functions"
+
+[[plugins]]
+  package = "@netlify/plugin-functions-install-core"

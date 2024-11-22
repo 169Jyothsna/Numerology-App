@@ -4,4 +4,4 @@
   publish = "frontend/build" # Correct path to the 'build' directory
 
 [functions]
-  directory = "frontend/backend/netlify/functions" # Path to Netlify functions
+  directory = "backend/netlify/functions" # Path to Netlify functions

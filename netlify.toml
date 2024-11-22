@@ -1,8 +1,7 @@
 [build]
-base = "frontend"
-command = "npm run build"
-publish = "frontend/build"
-functions = "backend/netlify/functions"
+  base = "frontend" # Set base to 'frontend' as the root directory for frontend build
+  command = "npm run build" # Build command
+  publish = "frontend/build" # Correct path to the 'build' directory
 
-[[plugins]]
-package = "@netlify/plugin-functions-install-core"
+[functions]
+  directory = "frontend/backend/netlify/functions" # Path to Netlify functions

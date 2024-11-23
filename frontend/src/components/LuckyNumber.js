@@ -2,6 +2,13 @@ import React, { useState } from "react";
 import axios from "axios";
 import "../styles/LuckyNumber.css";
 
+const apiUrl = process.env.REACT_APP_API_URL || "https://mern-numerology-app.netlify.app/.netlify/functions";
+
+const fetchLuckyNumber = async (data) => {
+  const response = await axios.post(`${apiUrl}/luckyNumber`, data);
+  return response.data;
+};
+
 const LuckyNumber = () => {
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [name, setName] = useState("");
@@ -24,21 +31,23 @@ const LuckyNumber = () => {
   const handleCalculate = async () => {
     try {
       setError("");
-      const response = await axios.post(
-        "https://mern-numerology-app.netlify.app/.netlify/functions/luckyNumber",
-        {
-          dob: dateOfBirth,
-          name: name,
-        }
-      );
-      const result = response.data.luckyNumber;
-      setLuckyNumber(result);
+      if (!name || !dateOfBirth) {
+        setError("Please fill in both your name and date of birth.");
+        return;
+      }
+
+      const result = await fetchLuckyNumber({ dob: dateOfBirth, name: name });
+      setLuckyNumber(result.luckyNumber);
       setShowImage(true);
     } catch (error) {
+      setLuckyNumber(null);
+      setShowImage(false);
       setError("Error calculating lucky number. Please try again.");
       console.error(error);
     }
   };
+
+  const maxDate = new Date().toLocaleDateString("en-CA");
 
   return (
     <div className="lucky-number-container">
@@ -55,7 +64,7 @@ const LuckyNumber = () => {
         type="date"
         value={dateOfBirth}
         onChange={(e) => setDateOfBirth(e.target.value)}
-        max={new Date().toISOString().split("T")[0]}
+        max={maxDate}
       />
       <button onClick={handleCalculate}>Calculate</button>
       <br />
@@ -77,14 +86,14 @@ const LuckyNumber = () => {
             X
           </button>
           <img
-            src={`/${luckyNumber}.jpg`}
+            src={`${process.env.PUBLIC_URL}/${luckyNumber}.jpg`}
             alt={`Lucky Number ${luckyNumber}`}
             className="fullscreen-image"
           />
         </div>
       )}
 
-      {error && <p>{error}</p>}
+      {error && <p className="error-message">{error}</p>}
     </div>
   );
 };

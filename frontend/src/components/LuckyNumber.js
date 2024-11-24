@@ -24,6 +24,7 @@ const LuckyNumber = () => {
   const handleCalculate = async () => {
     try {
       setError("");
+      //Sending a POST request to backend API with user input
       const response = await axios.post(
         "https://my-backend-o9ay.onrender.com/api/luckyNumber",
         {

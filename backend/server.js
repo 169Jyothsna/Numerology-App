@@ -4,24 +4,28 @@ const cors = require("cors");
 const connectDB = require("./config/db");
 const luckyNumberRoutes = require("./routes/luckyNumberRoutes"); // Import lucky number routes
 
-// Load environment variables
+//Loading the environment variables
 dotenv.config();
 
-// Connect to MongoDB
+//Connecting to MongoDB
 connectDB();
 
-// Initialize Express app
+//Initializing the Express app
 const app = express();
 
-// Middleware
-app.use(cors({ origin: "*" })); // Enable CORS for cross-origin requests
-app.use(express.json()); // Parse JSON payloads
+//Middleware
+// Enabling CORS for cross-origin requests
+app.use(cors({ origin: "*" }));
+// Parsing JSON payloads
+app.use(express.json());
 
-// Define routes
-app.use("/api/user", require("./routes/userRoutes")); // Route for user-related requests
-app.use("/api", luckyNumberRoutes); // Route for lucky number-related requests
+//Defining the routes
+//This route is used for user-related requests
+app.use("/api/user", require("./routes/userRoutes"));
+//This route is used for lucky number-related requests
+app.use("/api", luckyNumberRoutes);
 
-// Start the server
+//Starting the server
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

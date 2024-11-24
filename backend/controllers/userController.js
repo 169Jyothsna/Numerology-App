@@ -1,16 +1,19 @@
 const User = require("../models/User");
 
-// Controller to create a new user
+//This controller is used to create a new user
 exports.createUser = async (req, res) => {
   try {
     const { name, dateOfBirth } = req.body;
 
     if (!name || !dateOfBirth) {
-      return res.status(400).json({ message: "Name and Date of Birth are required" });
+      return res
+        .status(400)
+        .json({ message: "Name and Date of Birth are required" });
     }
 
-    // Always create a new user
+    //Create a new user every time
     const newUser = new User({ name, dateOfBirth, luckyNumber: null });
+    //Save the user to MongoDB
     await newUser.save();
 
     res.status(201).json(newUser);
@@ -19,7 +22,7 @@ exports.createUser = async (req, res) => {
   }
 };
 
-// Controller to get a user by ID
+//This controller is used to get a user by ID
 exports.getUserById = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
@@ -30,7 +33,7 @@ exports.getUserById = async (req, res) => {
   }
 };
 
-// Controller to get all users
+//This controller is used to get all users
 exports.getAllUsers = async (req, res) => {
   try {
     const users = await User.find();
